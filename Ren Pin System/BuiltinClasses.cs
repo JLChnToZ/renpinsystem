@@ -29,10 +29,19 @@ namespace JLChnToZ.Renpin {
 	}
 	
 	public sealed class RandomGenerator: IRandomGenerator {
+		readonly static RandomGenerator defaultInstance;
 		readonly RandomNumberGenerator generator;
+		
+		public static RandomGenerator DefaultInstance {
+			get { return defaultInstance; }
+		}
 		
 		public RandomNumberGenerator UndelyingGenerator {
 			get { return generator; }
+		}
+		
+		static RandomGenerator() {
+			defaultInstance = new RandomGenerator();
 		}
 		
 		public RandomGenerator() {

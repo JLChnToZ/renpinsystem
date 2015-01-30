@@ -95,6 +95,10 @@ namespace JLChnToZ.Renpin {
 			return GetEnumerator();
 		}
 		
+		public T LuckyDraw(ILuckier luckier) {
+			return LuckyDraw(RandomGenerator.DefaultInstance, luckier);
+		}
+		
 		public T LuckyDraw(IRandomGenerator randomGenerator, ILuckier luckier) {
 			if (randomGenerator == null)
 				throw new ArgumentNullException("randomGenerator");
@@ -107,16 +111,19 @@ namespace JLChnToZ.Renpin {
 				return result;
 			float randomValue = 0, enumeratedValue = 0, resultRare = 1;
 			foreach (var rpitem in undelyingList)
-				randomValue += 1 / rpitem.rare * luckier.Luckyness;
+				randomValue += luckier.Luckyness / rpitem.rare;
 			randomValue *= randomGenerator.Random();
 			foreach (var rpitem in undelyingList) {
-				enumeratedValue += 1 / rpitem.rare * luckier.Luckyness;
+				enumeratedValue += luckier.Luckyness / rpitem.rare;
 				if (enumeratedValue > randomValue)
 					break;
 				result = rpitem.item;
 				resultRare = rpitem.rare;
 			}
-			luckier.Luckyness /= resultRare;
+			if(resultRare > 1)
+				luckier.Luckyness /= resultRare;
+			else
+				luckier.Luckyness += 1 - resultRare;
 			return result;
 		}
 	}
