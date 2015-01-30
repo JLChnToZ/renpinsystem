@@ -76,7 +76,12 @@ namespace JLChnToZ.Renpin {
 		}
 
 		public bool Remove(T item) {
-			throw new NotImplementedException();
+			int index = IndexOf(item);
+			if (index >= 0) {
+				RemoveAt(index);
+				return true;
+			}
+			return false;
 		}
 
 		public int Count {
