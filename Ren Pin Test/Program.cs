@@ -28,19 +28,28 @@ namespace JLChnToZ.Renpin.Test {
 		public static void Main(string[] args) {
 			var luckier = new Luckier();
 			var luckyDraw = new RenPinList<string>();
-			luckyDraw.Add("Thank you for coming", 0.1F);
-			luckyDraw.Add("Diamond", 5F);
-			luckyDraw.Add("Gold", 4F);
-			luckyDraw.Add("Bronze", 2F);
+			luckyDraw.Add("謝謝惠顧", 0.1F);
+			luckyDraw.Add("鴨蛋（★☆☆☆☆）", 1F);
+			luckyDraw.Add("雞蛋（★★☆☆☆）", 2F);
+			luckyDraw.Add("銅蛋（★★★☆☆）", 3F);
+			luckyDraw.Add("銀蛋（★★★★☆）", 4F);
+			luckyDraw.Add("鍍金蛋（★★★★★ Rare）", 5F);
+			luckyDraw.Add("金蛋（★★★★★ Rare+）", 6F);
+			luckyDraw.Add("白金蛋（★★★★★ Super Rare）", 7F);
+			luckyDraw.Add("鑽石蛋（★★★★★ Super Rare+）", 8F);
+			luckyDraw.Add("鑲金鑽石蛋（★★★★★ Ultra Rare）", 9F);
+			luckyDraw.Add("神之蛋（★★★★★ Ultra Rare+）", 10F);
 			
-			Console.WriteLine("Start a new gacha, you have {0} ren pin now.", luckier.Luckyness);
-			for(int i = 0; i < 250; i++) {
+			Console.WriteLine("開始轉蛋活動，看看你的手氣怎樣呢？\n注：你現在有 {0:0.##} 人品。", luckier.Luckyness);
+			int i = 0;
+			while(true) {
 				var result = luckyDraw.LuckyDraw(luckier);
-				Console.WriteLine("#{0}: You got \"{1}\", now you have {2} ren pin.", i + 1, result, luckier.Luckyness);
+				Console.WriteLine("第 {0} 抽：你獲得「{1}」，剩餘 {2:0.##} 人品。", ++i, result, luckier.Luckyness);
+				var key = Console.ReadKey(true);
+				if (key.Key == ConsoleKey.Escape)
+					break;
 			}
 			
-			Console.Write("Press any key to continue . . . ");
-			Console.ReadKey(true);
 		}
 	}
 }

@@ -120,37 +120,45 @@ namespace JLChnToZ.Renpin {
 		}
 		
 		public T LuckyDraw(ILuckier luckier) {
-			return LuckyDraw(RandomGenerator.DefaultInstance, luckier);
+			return LuckyDraw(RandomGenerator.DefaultInstance, luckier, LuckinessAdjustment);
 		}
 		
 		public T LuckyDraw(IRandomGenerator randomGenerator, ILuckier luckier) {
+			return LuckyDraw(randomGenerator, luckier, LuckinessAdjustment);
+		}
+		
+		public T LuckyDraw(IRandomGenerator randomGenerator, ILuckier luckier, Func<float, float, float> luckinessAdjustmentFunc) {
 			if (randomGenerator == null)
 				throw new ArgumentNullException("randomGenerator");
 			if (luckier == null)
 				throw new ArgumentNullException("luckier");
 			if (luckier.Luckyness <= 0)
 				throw new ArgumentOutOfRangeException("luckier", luckier.Luckyness, "Luckyness must greater than zero.");
-			T result = default(T);
 			if (undelyingList.Count <= 0)
-				return result;
-			float randomValue = 0, enumeratedValue = 0, resultRare = 1;
+				return default(T);
+			float randomValue = 0, enumeratedValue = 0;
+			var item = undelyingList[0];
 			foreach (var rpitem in undelyingList)
-				randomValue += luckier.Luckyness / rpitem.rare;
+				randomValue += CountWeight(luckier.Luckyness, rpitem.rare);
 			randomValue *= randomGenerator.Random();
-			result = undelyingList[0].item;
-			resultRare = undelyingList[0].rare;
 			foreach (var rpitem in undelyingList) {
-				enumeratedValue += luckier.Luckyness / rpitem.rare;
+				enumeratedValue += CountWeight(luckier.Luckyness, rpitem.rare);
 				if (enumeratedValue > randomValue)
 					break;
-				result = rpitem.item;
-				resultRare = rpitem.rare;
+				item = rpitem;
 			}
-			if(resultRare > 1)
-				luckier.Luckyness /= resultRare;
-			else
-				luckier.Luckyness += 1 - resultRare;
-			return result;
+			luckier.Luckyness = luckinessAdjustmentFunc(luckier.Luckyness, item.rare);
+			return item.item;
+		}
+		
+		static float CountWeight(float luckiness, float rare) {
+			return luckiness / rare;
+		}
+		
+		static float LuckinessAdjustment(float original, float resultRareness) {
+			if(resultRareness > 1)
+				return original / resultRareness;
+			return original + 1 - resultRareness;
 		}
 	}
 }
