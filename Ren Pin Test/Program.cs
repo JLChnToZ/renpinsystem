@@ -21,13 +21,26 @@
  * THE SOFTWARE.
  */
 using System;
+using JLChnToZ.Renpin;
 
-namespace JLChnToZ.Renpin {
-	public interface ILuckier {
-		float Luckyness { get; set; }
-	}
-	
-	public interface IRandomGenerator {
-		float Random();
+namespace JLChnToZ.Renpin.Test {
+	class Program {
+		public static void Main(string[] args) {
+			var luckier = new Luckier();
+			var luckyDraw = new RenPinList<string>();
+			luckyDraw.Add("Thank you for coming", 0.1F);
+			luckyDraw.Add("Diamond", 5F);
+			luckyDraw.Add("Gold", 4F);
+			luckyDraw.Add("Bronze", 2F);
+			
+			Console.WriteLine("Start a new gacha, you have {0} ren pin now.", luckier.Luckyness);
+			for(int i = 0; i < 250; i++) {
+				var result = luckyDraw.LuckyDraw(luckier);
+				Console.WriteLine("#{0}: You got \"{1}\", now you have {2} ren pin.", i + 1, result, luckier.Luckyness);
+			}
+			
+			Console.Write("Press any key to continue . . . ");
+			Console.ReadKey(true);
+		}
 	}
 }
